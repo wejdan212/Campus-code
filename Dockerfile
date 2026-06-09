@@ -1,15 +1,10 @@
 FROM php:8.2-apache
-RUN docker-php-ext-install mysqli
-RUN a2dismod mpm_event mpm_worker && a2enmod mpm_prefork
-COPY . /var/www/html/
-FROM php:8.2-cli
 
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+RUN docker-php-ext-install mysqli pdo pdo_mysql \
+    && a2dismod mpm_worker \
+    && a2enmod mpm_prefork \
+    && a2enmod rewrite
 
-COPY . /app
+COPY . /var/www/html
 
-WORKDIR /app
-
-EXPOSE 8080
-
-CMD ["php", "-S", "0.0.0.0:8080"]
+EXPOSE 80
